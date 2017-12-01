@@ -1,0 +1,32 @@
+#!/usr/bin/env bash 
+
+# sudo apt-get install cryptsetup lxd
+# sudo usermod -sG lxd bobj
+
+sudo lxd init --storage-backend=dir --auto
+lxc launch ubuntu:16.04 db
+lxc launch ubuntu:16.04 proxy
+lxc launch ubuntu:16.04 app
+
+lxc config set db boot.autostart false
+lxc config set proxy boot.autostart false
+lxc config set app boot.autostart false
+
+sudo truncate --size 60G /var/local/crypt
+sudo chmod 600 /var/local/crypt
+sudo losetup /dev/loop0 /var/local/crypt 
+sudo cryptsetup -y luksFormat /dev/loop0 
+sudo cryptsetup luksOpen /dev/loop0 crypt
+
+sudo mkfs.ext4 /dev/mapper/crypt
+
+DB_ROOT=$(sudo ls -l /var/lib/lxd/containers/db |awk '/rootfs/ {print $3}')
+sudo mkdir /mnt/tmp
+sudo mount /dev/mapper/crypt /mnt/tmp
+sudo chown -R $DB_ROOT:$DB_ROOT /mnt/data/
+
+lxc config device add db crypt disk source=/dev/mapper/crypt path=/mnt/data
+
+echo 'alias db="lxc exec -- db"' >> /etc/.bashrc
+echo 'alias proxy="lxc exec -- proxy"' >> /etc/.bashrc
+echo 'alias app="lxc exec -- app"' >> /etc/.bashrc

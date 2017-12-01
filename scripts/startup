@@ -1,0 +1,11 @@
+#!/usr/bin/env bash 
+
+echo "Mounting loopback device"
+sudo losetup /dev/loop0 /var/local/crypt 
+echo "Opening encrypted disk"
+sudo cryptsetup luksOpen /dev/loop0 crypt
+
+echo "Starting containers"
+lxc start db
+lxc start app
+lxc start proxy
