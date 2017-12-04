@@ -8,7 +8,7 @@ This repository describes an installation of dhis2 running on a vps server.  The
 ### Containerisation
 In order to provide some isolation, the web proxy, the web application and the database are each running in separate containers.  The host system is running ubuntu server 16.04 LTS.  The three containers are implemented using lxd.
 
-Details of the lxd setup are decribed in [containers.md].
+Details of the lxd setup are decribed in [containers.md](containers.md).
 
 ### System hardening
 The base system and containers are all based on ubuntu 16.04.  Various hardening measures which have been implemented are described in [hardening.md].  These measures implement a subset of the CIS benchmarks for ubuntu systems as well as specific measures for tomcat and apache.
