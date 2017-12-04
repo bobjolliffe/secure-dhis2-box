@@ -29,9 +29,10 @@ edit /etc/apache2/mods-available/security2.conf
 Blocks funny things like:
 curl -k "https://slart.dhis2.org/dhis/dhis-web-commons/security/login.action/?><script>'alert(1)'</script>"
 
-```apache
 ## some false positives and dhis2 tweaks
+Put the following into /etc/modsecurity/dhis.conf.
 
+```apache
 # libinjection doesn't like to see rename()
 # for example: GET /dhis/api/26/dimensions.json?fields=id,displayName~rename(name),dimensionType
 # disable rule 942100 when we see rename in the argument list
