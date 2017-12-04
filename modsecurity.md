@@ -1,15 +1,16 @@
 # Web application firewall
 
 ## Install
+The following steps were followed to install modsecurity with the CRS ruleset:
+
+```bash
 apt-get install libapache2-modsecurity
-
 mv /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
-
 rm -rf /usr/share/modsecurity-crs
-
 cd /usr/share/modsecurity-crs
+```
 
-edit /etc/apache2/mods-available/security2.conf
+Edit /etc/apache2/mods-available/security2.conf
 
 ```apache
 <IfModule security2_module>
@@ -26,11 +27,13 @@ edit /etc/apache2/mods-available/security2.conf
 </IfModule>
 ```
 
+Set SecRuleEngine from DetectOnly to On in /etc/modsecurity/modsecurity.conf.
+
 Blocks funny things like:
 curl -k "https://slart.dhis2.org/dhis/dhis-web-commons/security/login.action/?><script>'alert(1)'</script>"
 
 ## some false positives and dhis2 tweaks
-Put the following into /etc/modsecurity/dhis.conf.
+Put the following into /etc/modsecurity/dhis.conf to workaround some peculiarities.  There may be more will get added here.
 
 ```apache
 # libinjection doesn't like to see rename()
